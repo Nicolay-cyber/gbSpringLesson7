@@ -5,7 +5,7 @@ server:
 spring:
   datasource:
     driver-class-name: org.sqlite.JDBC
-    url: jdbc:sqlite:C:/Users/Николай/Desktop/gbSpringLesson7/Database.db
+    url: jdbc:sqlite:file:.\Database.db
   jpa:
     show-sql: true
     properties:
