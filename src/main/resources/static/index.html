@@ -1,0 +1,63 @@
+<!doctype html>
+
+<html ng-app="app">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular.min.js"></script>
+    <script src="index.js"></script>
+</head>
+
+<body>
+
+<div class="container" ng-controller="indexController">
+    <p></p>
+    <h3>Добавить продукт</h3>
+    <form novalidate ng-submit="createProduct()">
+        <input class="form-control" type="text" placeholder="Название продукта" ng-model="newProduct.title">
+        <p></p>
+        <input class="form-control" type="number" placeholder="Стоимость" ng-model="newProduct.cost">
+        <p></p>
+        <button type="submit" class="btn btn-primary">Сохранить продукт</button>
+    </form>
+
+    <p></p>
+    <h3>Фильтр</h3>
+    <form novalidate ng-submit="costFilter()">
+        <input class="form-control" type="number" placeholder="Минимальная сумма" ng-model="costFilter.min">
+        <p></p>
+        <input class="form-control" type="number" placeholder="Максимальная сумма" ng-model="costFilter.max">
+        <p></p>
+        <button type="submit" class="btn btn-primary">Применить фильтр</button>
+    </form>
+
+    <h3>Список продуктов</h3>
+    <table class="table table-hover" >
+        <tr>
+            <td>ID</td>
+            <td>Название продукта</td>
+            <td>Стоимость</td>
+            <td>Действие</td>
+        </tr>
+        <tbody>
+        <tr ng-repeat="p in ProductList">
+            <td>{{p.id}}</td>
+            <td>{{p.title}}</td>
+            <td>
+                <button class="btn btn-primary" ng-click="changeCost(-1, p.id)">-</button>
+                {{p.cost}}
+                <button class="btn btn-primary" ng-click="changeCost(1, p.id)">+</button>
+            </td>
+            <td>
+                <button class="btn btn-danger" ng-click="deleteProduct(p.id)">Удалить</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
