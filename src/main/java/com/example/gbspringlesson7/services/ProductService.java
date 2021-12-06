@@ -38,4 +38,12 @@ public class ProductService {
     public List<Product> findMoreExpensiveThen(Integer border){
         return productRepository.findMoreExpensiveThen(border);
     }
+
+    public void changeCost(Integer delta, Long id){
+        productRepository.changeCost(delta, id);
+    }
+
+    public Product save(Product product){
+        return productRepository.save(product);
+    }
 }

@@ -3,10 +3,7 @@ package com.example.gbspringlesson7.controllers;
 import com.example.gbspringlesson7.entities.Product;
 import com.example.gbspringlesson7.exceptions.ResourceNotFoundException;
 import com.example.gbspringlesson7.services.ProductService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,7 +32,7 @@ public class ProductController {
     }
 
     @GetMapping("/products/cost_between")
-    public List<Product> findProductBetween(@RequestParam(defaultValue = "0") Integer min, @RequestParam(defaultValue = "100") Integer max) {
+    public List<Product> findProductBetween(@RequestParam(defaultValue = "0") Integer min, @RequestParam(defaultValue = "100000") Integer max) {
         return productService.findAllByCostBetween(min, max);
     }
 
@@ -47,5 +44,14 @@ public class ProductController {
     @GetMapping("/products/more_expensive_then")
     public List<Product> findMoreExpensiveThen(@RequestParam(defaultValue = "0") Integer border) {
         return productService.findMoreExpensiveThen(border);
+    }
+    @GetMapping("/products/change_cost")
+    public void changeCost(@RequestParam Integer delta, @RequestParam Long id){
+        productService.changeCost(delta, id);
+    }
+    @RequestMapping(value = "/products", method = RequestMethod.POST)
+    public Product saveNewProduct(@RequestBody Product product) {
+        return productService.save(product);
+
     }
 }
