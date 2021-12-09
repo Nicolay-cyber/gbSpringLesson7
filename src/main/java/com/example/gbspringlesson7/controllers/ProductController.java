@@ -1,13 +1,13 @@
 package com.example.gbspringlesson7.controllers;
-
+import com.example.gbspringlesson7.dto.ProductDto;
 import com.example.gbspringlesson7.entities.Product;
 import com.example.gbspringlesson7.exceptions.ResourceNotFoundException;
 import com.example.gbspringlesson7.services.ProductService;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
+@RequestMapping("/api/v1/products")
 public class ProductController {
     private ProductService productService;
 
@@ -16,42 +16,43 @@ public class ProductController {
     }
 
 
-    @GetMapping("/products")
-    public List<Product> getAllProducts() {
-        return productService.getAllProducts();
+    @GetMapping
+    public Page<ProductDto> getAllProducts(
+        @RequestParam(name = "p", defaultValue = "1") Integer page,
+        @RequestParam(name = "min_cost", required = false) Integer minCost,
+        @RequestParam(name = "max_cost", required = false) Integer maxCost,
+        @RequestParam(name = "title_part", required = false) String titlePart
+    ) {
+            if (page < 1) {
+                page = 1;
+            }
+            return productService.find(minCost, maxCost, titlePart, page).map(
+                    p -> new ProductDto(p)
+            );
     }
 
-    @GetMapping("/products/delete/{id}")
+    @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Long id) {
         productService.deleteById(id);
     }
 
-    @GetMapping("/products/{id}")
+    @GetMapping("/{id}")
     public Product getProduct(@PathVariable Long id) {
         return productService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found, id: " + id));
     }
 
-    @GetMapping("/products/cost_between")
-    public List<Product> findProductBetween(@RequestParam(defaultValue = "0") Integer min, @RequestParam(defaultValue = "100000") Integer max) {
-        return productService.findAllByCostBetween(min, max);
-    }
-
-    @GetMapping("/products/chipper_then")
-    public List<Product> findChipperThen(@RequestParam(defaultValue = "0") Integer border) {
-        return productService.findChipperThen(border);
-    }
-
-    @GetMapping("/products/more_expensive_then")
-    public List<Product> findMoreExpensiveThen(@RequestParam(defaultValue = "0") Integer border) {
-        return productService.findMoreExpensiveThen(border);
-    }
-    @GetMapping("/products/change_cost")
+    @GetMapping("/change_cost")
     public void changeCost(@RequestParam Integer delta, @RequestParam Long id){
         productService.changeCost(delta, id);
     }
-    @RequestMapping(value = "/products", method = RequestMethod.POST)
-    public Product saveNewProduct(@RequestBody Product product) {
-        return productService.save(product);
 
+    @PostMapping
+    public Product saveNewProduct(@RequestBody Product product) {
+        product.setId(null);
+        return productService.save(product);
+    }
+    @PutMapping
+    public Product updateProduct(@RequestBody Product product){
+        return productService.save(product);
     }
 }
