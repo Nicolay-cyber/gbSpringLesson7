@@ -2,9 +2,11 @@ package com.example.gbspringlesson7.services;
 
 import com.example.gbspringlesson7.entities.Product;
 import com.example.gbspringlesson7.repositories.ProductRepository;
+import com.example.gbspringlesson7.repositories.specifications.ProductSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -15,8 +17,19 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public List<Product> getAllProducts(){
-        return productRepository.findAll();
+    public Page<Product> find(Integer minCost, Integer maxCost, String titlePart, Integer page) {
+        Specification<Product> spec = Specification.where(null);
+        if (minCost != null) {
+            spec = spec.and(ProductSpecification.costGreaterOrEqualsThan(minCost));
+        }
+        if (maxCost != null) {
+            spec = spec.and(ProductSpecification.costLessThanOrEqualsThan(maxCost));
+        }
+        if (titlePart != null) {
+            spec = spec.and(ProductSpecification.titleLike(titlePart));
+        }
+
+        return productRepository.findAll(spec, PageRequest.of(page - 1, 30));
     }
 
     public void deleteById(Long id){
@@ -25,18 +38,6 @@ public class ProductService {
 
     public Optional<Product> findById(Long id){
         return productRepository.findById(id);
-    }
-
-    public List<Product> findAllByCostBetween(Integer min, Integer max) {
-        return productRepository.findAllByCostBetween(min,max);
-    }
-
-    public List<Product> findChipperThen(Integer border){
-        return productRepository.findChipperThen(border);
-    }
-
-    public List<Product> findMoreExpensiveThen(Integer border){
-        return productRepository.findMoreExpensiveThen(border);
     }
 
     public void changeCost(Integer delta, Long id){
