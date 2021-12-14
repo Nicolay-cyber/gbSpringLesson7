@@ -28,8 +28,7 @@ public class ProductService {
         if (titlePart != null) {
             spec = spec.and(ProductSpecification.titleLike(titlePart));
         }
-
-        return productRepository.findAll(spec, PageRequest.of(page - 1, 30));
+        return productRepository.findAll(spec, PageRequest.of(page - 1, 5));
     }
 
     public void deleteById(Long id){
