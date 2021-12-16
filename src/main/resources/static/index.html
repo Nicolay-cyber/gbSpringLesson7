@@ -55,7 +55,7 @@
                 {{p.cost}}
             </td>
             <td>
-                <button class="btn btn-success" ng-click="addToCart(p)">Добавить</button>
+                <button class="btn btn-success" ng-click="addToCart(p.id, p.title, p.cost)">Добавить</button>
             </td>
         </tr>
         </tbody>
@@ -70,6 +70,31 @@
 
         </ul>
     </nav>
+    <h3>Корзина</h3>
+    <table class="table table-hover" >
+        <tr>
+            <td>Название продукта</td>
+            <td>Стоимость</td>
+            <td>Количество</td>
+            <td>Действие</td>
+        </tr>
+        <tbody>
+        <tr ng-repeat="ol in cart">
+            <td>{{ol.title}}</td>
+            <td>
+                {{ol.cost}}
+            </td>
+            <td>
+                <button class="btn btn-primary" ng-click="changeCount(-1, ol.id)">-</button>
+                {{ol.count}}
+                <button class="btn btn-primary" ng-click="changeCount(1, ol.id)">+</button>
+            </td>
+            <td>
+                <button class="btn btn-danger" ng-click="removeFromCart(ol.id)">Удалить</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
 </div>
 </body>

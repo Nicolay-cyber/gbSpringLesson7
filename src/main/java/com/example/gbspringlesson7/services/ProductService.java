@@ -1,12 +1,16 @@
 package com.example.gbspringlesson7.services;
 
+import com.example.gbspringlesson7.dto.ProductDto;
 import com.example.gbspringlesson7.entities.Product;
+import com.example.gbspringlesson7.exceptions.ResourceNotFoundException;
 import com.example.gbspringlesson7.repositories.ProductRepository;
 import com.example.gbspringlesson7.repositories.specifications.ProductSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Optional;
 
 @Service
@@ -45,5 +49,13 @@ public class ProductService {
 
     public Product save(Product product){
         return productRepository.save(product);
+    }
+
+    @Transactional
+    public Product update(ProductDto productDto) {
+        Product product = productRepository.findById(productDto.getId()).orElseThrow(() -> new ResourceNotFoundException("Невозможно обновить продукт, не найден в базе, id: " + productDto.getId()));
+        product.setCost(productDto.getCost());
+        product.setTitle(productDto.getTitle());
+        return product;
     }
 }

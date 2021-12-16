@@ -18,25 +18,60 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
             $scope.pageArray = $scope.generatePageArray(1, $scope.productList.totalPages);
         });
     };
-
-    $scope.deleteProduct = function (productId) {
-        $http.delete(contextPath + '/products/' + productId)
-            .then(function (response) {
-                $scope.loadProducts(currentPageIndex);
+    $scope.loadCart = function (){
+        $http.get(contextPath + '/cart')
+            .then(function (response){
+               $scope.cart = response.data;
             });
     }
+    $scope.addToCart = function (productId, productTitle, productCost){
 
-    $scope.changeCost = function (delta, id) {
         $http({
-            url: contextPath + '/products/change_cost',
+            url: contextPath + '/cart',
+            method: 'POST',
+            params: {
+                productId: productId,
+                productTitle: productTitle,
+                productCost: productCost
+            }
+        }).then(function (response) {
+
+            $scope.loadCart();
+        });
+    }
+
+    $scope.removeFromCart = function (productId){
+        $http.delete(contextPath + '/cart/' + productId)
+            .then(function (response){
+               $scope.loadCart();
+            });
+    };
+
+    $scope.generatePageArray = function (startPage, endPage) {
+        let arr = [];
+        for (let i = startPage; i < endPage + 1; i++) {
+            arr.push(i);
+        }
+        return arr;
+    }
+    $scope.changeCount = function (delta, id) {
+        $http({
+            url: contextPath + '/cart/change_count',
             method: 'GET',
             params: {
                 delta: delta,
                 id: id
             }
         }).then(function (response) {
-            $scope.loadProducts(currentPageIndex);
+            $scope.loadCart();
         });
+    }
+
+    $scope.deleteProduct = function (productId) {
+        $http.delete(contextPath + '/products/' + productId)
+            .then(function (response) {
+                $scope.loadProducts(currentPageIndex);
+            });
     }
 
     $scope.createProduct = function () {
@@ -48,6 +83,7 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
                 alert(response.data.message);
             });
     }
-
+    $scope.loadCart();
     $scope.loadProducts(currentPageIndex);
+
 });
